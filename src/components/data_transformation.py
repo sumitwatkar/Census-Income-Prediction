@@ -44,12 +44,12 @@ class DataTransformation:
             )
             
             preprocessor = ColumnTransformer([
-                "num_pipeline", num_pipeline, numerical_features
+                ("num_pipeline", num_pipeline, numerical_features)
             ])
             return preprocessor
 
         except Exception as e:
-            raise CustomException(e, sys) from e
+            raise CustomException(e, sys)
         
     def remove_outliers_IQR(self, col, df):
         try:
@@ -69,7 +69,7 @@ class DataTransformation:
 
         except Exception as e:
             logging.info("Outliers treatment done")
-            raise CustomException(e, sys) from e
+            raise CustomException(e, sys)
         
 
     def initiate_data_transformation(self, train_path, test_path):
@@ -109,13 +109,11 @@ class DataTransformation:
             # Apply transformation on train data and test data
             input_train_arr = preprocessor_obj.fit_transform(input_feature_train_data)
             input_test_arr = preprocessor_obj.transform(input_feature_test_data)
-            logging.info("Transformation done")
 
 
             # Apply preprocessor object on train data and test data
             train_array = np.c_[input_train_arr, np.array(target_feature_train_data)]
             test_array = np.c_[input_test_arr, np.array(target_feature_test_data)]
-            logging.info('Preprocessor log')
 
 
             save_obj (file_path= self.data_transformation_config.preprocesor_obj_file_path,
@@ -127,5 +125,4 @@ class DataTransformation:
     
 
         except Exception as e:
-            raise CustomException(e, sys) from e
-
+            raise CustomException(e, sys)

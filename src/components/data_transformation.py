@@ -17,7 +17,6 @@ from sklearn.compose import ColumnTransformer
 from src.utils import save_obj
 
 
-
 @dataclass
 class DataTransformationConfig:
     preprocesor_obj_file_path = os.path.join("artifacts/data_transformation", "preprocessor.pkl")
@@ -49,7 +48,7 @@ class DataTransformation:
             return preprocessor
 
         except Exception as e:
-            raise CustomException(e, sys)
+            raise CustomException(e, sys) from e
         
     def remove_outliers_IQR(self, col, df):
         try:

@@ -9,12 +9,13 @@ from dataclasses import dataclass
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from src.utils import save_obj
-
+from src.utils import evaluate_model
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_curve, f1_score, precision_score, recall_score
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
-from src.utils import evaluate_model
+
 
 
 @dataclass
@@ -25,20 +26,21 @@ class ModelTrainer:
     def __init__(self):
         self.model_trainer_config = ModelTrainerConfig()
 
+
     def initiate_model_trainer(self, train_array, test_array):
         try:
             logging.info("Splitting the data into dependent and independent features")
 
             X_train, y_train, X_test, y_test = (
                 train_array[:, :-1],
-                train_array[:, :-1],
+                train_array[:, -1],
                 test_array[:, :-1],
-                test_array[:, :-1]
+                test_array[:, -1]
             )
 
             logging.info("Machine Learning Algorithms initialization")
             
-            model = {
+            models = {
                 "Random Forest" : RandomForestClassifier(),
                 "Decision Tree" : DecisionTreeClassifier(),
                 "Logistic Regression": LogisticRegression()
@@ -46,6 +48,7 @@ class ModelTrainer:
             }
 
             logging.info("Machine Learning Parameters Initialization")
+
 
 
             params = {
@@ -76,17 +79,19 @@ class ModelTrainer:
 
             logging.info("Model Evaluation Started")
 
-            model_report: dict = evaluate_model(X_train = X_train, y_train = y_train, X_test = X_test, y_test = y_test, models = model, params = params)
+            model_report: dict = evaluate_model(self, X_train = X_train, y_train = y_train, X_test = X_test, y_test = y_test, models = models, params = params)
+
+            logging.info("Model report initiation")
 
             # to get  best model from our report dict
             best_model_score = max(sorted(model_report.values()))
 
-            best_model_name = list(model.keys())[
+            best_model_name = list(models.keys())[
                 list(model_report.values()).index(best_model_score)
 
             ]
 
-            best_model = model[best_model_name]
+            best_model = models[best_model_name]
 
             logging.info(f"Best Model Found, Model Name : {best_model_name}, Accuracy Score : {best_model_score}")
 
@@ -94,7 +99,5 @@ class ModelTrainer:
             save_obj(file_path= self.model_trainer_config.train_model_file_path,
                      obj = best_model)
 
-
         except Exception as e:
             raise CustomException(e, sys)
-

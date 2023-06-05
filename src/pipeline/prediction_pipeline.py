@@ -21,7 +21,7 @@ class PredictionPipeline():
 
     def predict(self, features):
         preprocessor_path = os.path.join("artifacts/data_transformation", "preprocessor.pkl")
-        model_path = os.path.join(("artifacts/model_trainer", "model.pkl"))
+        model_path = os.path.join("artifacts/model_trainer", "model.pkl")
 
         preprocessor = load_object(preprocessor_path)
         model =  load_object(model_path)

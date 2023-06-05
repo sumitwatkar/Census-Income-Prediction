@@ -6,22 +6,28 @@ import pickle
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_recall_curve, f1_score, precision_score, recall_score
 from sklearn.model_selection import GridSearchCV
 
+
 def save_obj(file_path, obj):
     try:
         dir_path = os.path.dirname(file_path)
-
         os.makedirs(dir_path, exist_ok = True)
 
         with open(file_path, 'wb') as file_obj:
-            pickle.dump(obj, file_obj)
-        
-
+            pickle.dump(obj, file_obj)       
     except Exception as e:
         raise CustomException(e, sys)
     
 
+def load_object(file_path):
+    try:
+        with open(file_path, "rb") as f_object:
+            return pickle.load(f_object) 
+    except Exception as e:
+        raise CustomException(e, sys)
+
+
 def evaluate_model(self,X_train,y_train,X_test,y_test,models,params):
-        try:
+     try:
             report = {}
 
             for i in range(len(list(models))):
@@ -41,6 +47,6 @@ def evaluate_model(self,X_train,y_train,X_test,y_test,models,params):
                 
                 report[model_name] = test_model_score
             return report
-
-        except Exception as e:
+     
+     except Exception as e:
          raise CustomException(sys, e)
